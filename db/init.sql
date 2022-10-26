@@ -1,6 +1,6 @@
 CREATE DATABASE IF NOT EXISTS appDB;
 CREATE USER IF NOT EXISTS 'user'@'%' IDENTIFIED BY 'password';
-GRANT SELECT,UPDATE,INSERT ON appDB.* TO 'user'@'%';
+GRANT SELECT,UPDATE,INSERT,DELETE ON appDB.* TO 'user'@'%';
 FLUSH PRIVILEGES;
 
 USE appDB;
@@ -16,7 +16,12 @@ CREATE TABLE IF NOT EXISTS products (
   price INTEGER,
   PRIMARY KEY (ID)
 );
-
+CREATE TABLE IF NOT EXISTS orders (
+    ID INT(11) NOT NULL AUTO_INCREMENT,
+    name VARCHAR(30) NOT NULL,
+    price INTEGER,
+    PRIMARY KEY (ID)
+);
 INSERT INTO users (login, password)
 SELECT * FROM (SELECT 'vadim', '{SHA}QL0AFWMIX8NRZTKeof9cXsvbvu8=') AS tmp
 WHERE NOT EXISTS (
@@ -52,3 +57,14 @@ SELECT * FROM (SELECT 'Moccaccino', 125) AS tmp
 WHERE NOT EXISTS (
     SELECT name FROM products WHERE name = 'Moccaccino' AND price = 125
 ) LIMIT 1;
+INSERT INTO orders (name, price)
+SELECT * FROM (SELECT 'Gregory', 195) AS tmp
+WHERE NOT EXISTS (
+        SELECT name FROM orders WHERE name = 'Gregory' AND price = 300
+    ) LIMIT 1;
+
+INSERT INTO orders (name, price)
+SELECT * FROM (SELECT 'Andrew', 250) AS tmp
+WHERE NOT EXISTS (
+        SELECT name FROM orders WHERE name = 'Andrew' AND price = 280
+    ) LIMIT 1;
